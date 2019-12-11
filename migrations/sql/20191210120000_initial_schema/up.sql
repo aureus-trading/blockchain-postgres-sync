@@ -1384,7 +1384,7 @@ CREATE TABLE public.addresses_0_1 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_0_1 FOR VALUES FROM ('3P0') TO ('3P1');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_0_1 FOR VALUES FROM ('3M0') TO ('3M1');
 
 
 ALTER TABLE public.addresses_0_1 OWNER TO apetrov;
@@ -1396,7 +1396,7 @@ CREATE TABLE public.addresses_1_2 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_1_2 FOR VALUES FROM ('3P1') TO ('3P2');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_1_2 FOR VALUES FROM ('3M1') TO ('3M2');
 
 
 ALTER TABLE public.addresses_1_2 OWNER TO apetrov;
@@ -1408,7 +1408,7 @@ CREATE TABLE public.addresses_2_3 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_2_3 FOR VALUES FROM ('3P2') TO ('3P3');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_2_3 FOR VALUES FROM ('3M2') TO ('3M3');
 
 
 ALTER TABLE public.addresses_2_3 OWNER TO apetrov;
@@ -1420,7 +1420,7 @@ CREATE TABLE public.addresses_3_4 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_3_4 FOR VALUES FROM ('3P3') TO ('3P4');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_3_4 FOR VALUES FROM ('3M3') TO ('3M4');
 
 
 ALTER TABLE public.addresses_3_4 OWNER TO apetrov;
@@ -1432,7 +1432,7 @@ CREATE TABLE public.addresses_4_5 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_4_5 FOR VALUES FROM ('3P4') TO ('3P5');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_4_5 FOR VALUES FROM ('3M4') TO ('3M5');
 
 
 ALTER TABLE public.addresses_4_5 OWNER TO apetrov;
@@ -1444,7 +1444,7 @@ CREATE TABLE public.addresses_5_6 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_5_6 FOR VALUES FROM ('3P5') TO ('3P6');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_5_6 FOR VALUES FROM ('3M5') TO ('3M6');
 
 
 ALTER TABLE public.addresses_5_6 OWNER TO apetrov;
@@ -1456,7 +1456,7 @@ CREATE TABLE public.addresses_6_7 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_6_7 FOR VALUES FROM ('3P6') TO ('3P7');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_6_7 FOR VALUES FROM ('3M6') TO ('3M7');
 
 
 ALTER TABLE public.addresses_6_7 OWNER TO apetrov;
@@ -1468,7 +1468,7 @@ CREATE TABLE public.addresses_7_8 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_7_8 FOR VALUES FROM ('3P7') TO ('3P8');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_7_8 FOR VALUES FROM ('3M7') TO ('3M8');
 
 
 ALTER TABLE public.addresses_7_8 OWNER TO apetrov;
@@ -1480,7 +1480,7 @@ CREATE TABLE public.addresses_8_9 (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_8_9 FOR VALUES FROM ('3P8') TO ('3P9');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_8_9 FOR VALUES FROM ('3M8') TO ('3M9');
 
 
 ALTER TABLE public.addresses_8_9 OWNER TO apetrov;
@@ -1492,7 +1492,7 @@ CREATE TABLE public.addresses_9_a (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_9_a FOR VALUES FROM ('3P9') TO ('3Pa');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_9_a FOR VALUES FROM ('3M9') TO ('3Ma');
 
 
 ALTER TABLE public.addresses_9_a OWNER TO apetrov;
@@ -1504,7 +1504,7 @@ CREATE TABLE public.addresses_a_b (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_a_b FOR VALUES FROM ('3Pa') TO ('3Pb');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_a_b FOR VALUES FROM ('3Ma') TO ('3Mb');
 
 
 ALTER TABLE public.addresses_a_b OWNER TO apetrov;
@@ -1516,7 +1516,7 @@ CREATE TABLE public.addresses_b_c (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_b_c FOR VALUES FROM ('3Pb') TO ('3Pc');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_b_c FOR VALUES FROM ('3Mb') TO ('3Mc');
 
 
 ALTER TABLE public.addresses_b_c OWNER TO apetrov;
@@ -1528,7 +1528,7 @@ CREATE TABLE public.addresses_c_d (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_c_d FOR VALUES FROM ('3Pc') TO ('3Pd');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_c_d FOR VALUES FROM ('3Mc') TO ('3Md');
 
 
 ALTER TABLE public.addresses_c_d OWNER TO apetrov;
@@ -1540,7 +1540,7 @@ CREATE TABLE public.addresses_d_e (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_d_e FOR VALUES FROM ('3Pd') TO ('3Pe');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_d_e FOR VALUES FROM ('3Md') TO ('3Me');
 
 
 ALTER TABLE public.addresses_d_e OWNER TO apetrov;
@@ -1552,7 +1552,7 @@ CREATE TABLE public.addresses_e_f (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_e_f FOR VALUES FROM ('3Pe') TO ('3Pf');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_e_f FOR VALUES FROM ('3Me') TO ('3Mf');
 
 
 ALTER TABLE public.addresses_e_f OWNER TO apetrov;
@@ -1564,7 +1564,7 @@ CREATE TABLE public.addresses_f_g (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_f_g FOR VALUES FROM ('3Pf') TO ('3Pg');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_f_g FOR VALUES FROM ('3Mf') TO ('3Mg');
 
 
 ALTER TABLE public.addresses_f_g OWNER TO apetrov;
@@ -1576,7 +1576,7 @@ CREATE TABLE public.addresses_g_h (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_g_h FOR VALUES FROM ('3Pg') TO ('3Ph');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_g_h FOR VALUES FROM ('3Mg') TO ('3Mh');
 
 
 ALTER TABLE public.addresses_g_h OWNER TO apetrov;
@@ -1588,7 +1588,7 @@ CREATE TABLE public.addresses_h_i (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_h_i FOR VALUES FROM ('3Ph') TO ('3Pi');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_h_i FOR VALUES FROM ('3Mh') TO ('3Mi');
 
 
 ALTER TABLE public.addresses_h_i OWNER TO apetrov;
@@ -1600,7 +1600,7 @@ CREATE TABLE public.addresses_i_j (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_i_j FOR VALUES FROM ('3Pi') TO ('3Pj');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_i_j FOR VALUES FROM ('3Mi') TO ('3Mj');
 
 
 ALTER TABLE public.addresses_i_j OWNER TO apetrov;
@@ -1612,7 +1612,7 @@ CREATE TABLE public.addresses_j_k (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_j_k FOR VALUES FROM ('3Pj') TO ('3Pk');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_j_k FOR VALUES FROM ('3Mj') TO ('3Mk');
 
 
 ALTER TABLE public.addresses_j_k OWNER TO apetrov;
@@ -1624,7 +1624,7 @@ CREATE TABLE public.addresses_k_l (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_k_l FOR VALUES FROM ('3Pk') TO ('3Pl');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_k_l FOR VALUES FROM ('3Mk') TO ('3Ml');
 
 
 ALTER TABLE public.addresses_k_l OWNER TO apetrov;
@@ -1636,7 +1636,7 @@ CREATE TABLE public.addresses_l_m (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_l_m FOR VALUES FROM ('3Pl') TO ('3Pm');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_l_m FOR VALUES FROM ('3Ml') TO ('3Mm');
 
 
 ALTER TABLE public.addresses_l_m OWNER TO apetrov;
@@ -1648,7 +1648,7 @@ CREATE TABLE public.addresses_m_n (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_m_n FOR VALUES FROM ('3Pm') TO ('3Pn');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_m_n FOR VALUES FROM ('3Mm') TO ('3Mn');
 
 
 ALTER TABLE public.addresses_m_n OWNER TO apetrov;
@@ -1660,7 +1660,7 @@ CREATE TABLE public.addresses_n_o (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_n_o FOR VALUES FROM ('3Pn') TO ('3Po');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_n_o FOR VALUES FROM ('3Mn') TO ('3Mo');
 
 
 ALTER TABLE public.addresses_n_o OWNER TO apetrov;
@@ -1672,7 +1672,7 @@ CREATE TABLE public.addresses_o_p (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_o_p FOR VALUES FROM ('3Po') TO ('3Pp');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_o_p FOR VALUES FROM ('3Mo') TO ('3Mp');
 
 
 ALTER TABLE public.addresses_o_p OWNER TO apetrov;
@@ -1684,7 +1684,7 @@ CREATE TABLE public.addresses_p_q (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_p_q FOR VALUES FROM ('3Pp') TO ('3Pq');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_p_q FOR VALUES FROM ('3Mp') TO ('3Mq');
 
 
 ALTER TABLE public.addresses_p_q OWNER TO apetrov;
@@ -1696,7 +1696,7 @@ CREATE TABLE public.addresses_q_r (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_q_r FOR VALUES FROM ('3Pq') TO ('3Pr');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_q_r FOR VALUES FROM ('3Mq') TO ('3Mr');
 
 
 ALTER TABLE public.addresses_q_r OWNER TO apetrov;
@@ -1708,7 +1708,7 @@ CREATE TABLE public.addresses_r_s (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_r_s FOR VALUES FROM ('3Pr') TO ('3Ps');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_r_s FOR VALUES FROM ('3Mr') TO ('3Ms');
 
 
 ALTER TABLE public.addresses_r_s OWNER TO apetrov;
@@ -1720,7 +1720,7 @@ CREATE TABLE public.addresses_s_t (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_s_t FOR VALUES FROM ('3Ps') TO ('3Pt');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_s_t FOR VALUES FROM ('3Ms') TO ('3Mt');
 
 
 ALTER TABLE public.addresses_s_t OWNER TO apetrov;
@@ -1732,7 +1732,7 @@ CREATE TABLE public.addresses_t_u (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_t_u FOR VALUES FROM ('3Pt') TO ('3Pu');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_t_u FOR VALUES FROM ('3Mt') TO ('3Mu');
 
 
 ALTER TABLE public.addresses_t_u OWNER TO apetrov;
@@ -1744,7 +1744,7 @@ CREATE TABLE public.addresses_u_v (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_u_v FOR VALUES FROM ('3Pu') TO ('3Pv');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_u_v FOR VALUES FROM ('3Mu') TO ('3Mv');
 
 
 ALTER TABLE public.addresses_u_v OWNER TO apetrov;
@@ -1756,7 +1756,7 @@ CREATE TABLE public.addresses_v_w (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_v_w FOR VALUES FROM ('3Pv') TO ('3Pw');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_v_w FOR VALUES FROM ('3Mv') TO ('3Mw');
 
 
 ALTER TABLE public.addresses_v_w OWNER TO apetrov;
@@ -1768,7 +1768,7 @@ CREATE TABLE public.addresses_w_x (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_w_x FOR VALUES FROM ('3Pw') TO ('3Px');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_w_x FOR VALUES FROM ('3Mw') TO ('3Mx');
 
 
 ALTER TABLE public.addresses_w_x OWNER TO apetrov;
@@ -1780,7 +1780,7 @@ CREATE TABLE public.addresses_x_y (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_x_y FOR VALUES FROM ('3Px') TO ('3Py');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_x_y FOR VALUES FROM ('3Mx') TO ('3My');
 
 
 ALTER TABLE public.addresses_x_y OWNER TO apetrov;
@@ -1792,7 +1792,7 @@ CREATE TABLE public.addresses_y_z (
     public_key character varying,
     first_appeared_on_height integer NOT NULL
 );
-ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_y_z FOR VALUES FROM ('3Py') TO ('3Pz');
+ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_y_z FOR VALUES FROM ('3My') TO ('3Mz');
 
 
 ALTER TABLE public.addresses_y_z OWNER TO apetrov;
