@@ -1393,7 +1393,7 @@ CREATE TABLE public.addresses_0_1 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_0_1 FOR VALUES FROM ('3P0') TO ('3P1');
 
 
-ALTER TABLE public.addresses_0_1 OWNER TO apetrov;
+ALTER TABLE public.addresses_0_1 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_1_2 (
@@ -1405,7 +1405,7 @@ CREATE TABLE public.addresses_1_2 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_1_2 FOR VALUES FROM ('3P1') TO ('3P2');
 
 
-ALTER TABLE public.addresses_1_2 OWNER TO apetrov;
+ALTER TABLE public.addresses_1_2 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_2_3 (
@@ -1417,7 +1417,7 @@ CREATE TABLE public.addresses_2_3 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_2_3 FOR VALUES FROM ('3P2') TO ('3P3');
 
 
-ALTER TABLE public.addresses_2_3 OWNER TO apetrov;
+ALTER TABLE public.addresses_2_3 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_3_4 (
@@ -1429,7 +1429,7 @@ CREATE TABLE public.addresses_3_4 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_3_4 FOR VALUES FROM ('3P3') TO ('3P4');
 
 
-ALTER TABLE public.addresses_3_4 OWNER TO apetrov;
+ALTER TABLE public.addresses_3_4 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_4_5 (
@@ -1441,7 +1441,7 @@ CREATE TABLE public.addresses_4_5 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_4_5 FOR VALUES FROM ('3P4') TO ('3P5');
 
 
-ALTER TABLE public.addresses_4_5 OWNER TO apetrov;
+ALTER TABLE public.addresses_4_5 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_5_6 (
@@ -1453,7 +1453,7 @@ CREATE TABLE public.addresses_5_6 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_5_6 FOR VALUES FROM ('3P5') TO ('3P6');
 
 
-ALTER TABLE public.addresses_5_6 OWNER TO apetrov;
+ALTER TABLE public.addresses_5_6 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_6_7 (
@@ -1465,7 +1465,7 @@ CREATE TABLE public.addresses_6_7 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_6_7 FOR VALUES FROM ('3P6') TO ('3P7');
 
 
-ALTER TABLE public.addresses_6_7 OWNER TO apetrov;
+ALTER TABLE public.addresses_6_7 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_7_8 (
@@ -1477,7 +1477,7 @@ CREATE TABLE public.addresses_7_8 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_7_8 FOR VALUES FROM ('3P7') TO ('3P8');
 
 
-ALTER TABLE public.addresses_7_8 OWNER TO apetrov;
+ALTER TABLE public.addresses_7_8 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_8_9 (
@@ -1489,7 +1489,7 @@ CREATE TABLE public.addresses_8_9 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_8_9 FOR VALUES FROM ('3P8') TO ('3P9');
 
 
-ALTER TABLE public.addresses_8_9 OWNER TO apetrov;
+ALTER TABLE public.addresses_8_9 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_9_a (
@@ -1501,7 +1501,7 @@ CREATE TABLE public.addresses_9_a (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_9_a FOR VALUES FROM ('3P9') TO ('3Pa');
 
 
-ALTER TABLE public.addresses_9_a OWNER TO apetrov;
+ALTER TABLE public.addresses_9_a OWNER TO dba;
 
 
 CREATE TABLE public.addresses_a_b (
@@ -1513,7 +1513,7 @@ CREATE TABLE public.addresses_a_b (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_a_b FOR VALUES FROM ('3Pa') TO ('3Pb');
 
 
-ALTER TABLE public.addresses_a_b OWNER TO apetrov;
+ALTER TABLE public.addresses_a_b OWNER TO dba;
 
 
 CREATE TABLE public.addresses_b_c (
@@ -1525,7 +1525,7 @@ CREATE TABLE public.addresses_b_c (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_b_c FOR VALUES FROM ('3Pb') TO ('3Pc');
 
 
-ALTER TABLE public.addresses_b_c OWNER TO apetrov;
+ALTER TABLE public.addresses_b_c OWNER TO dba;
 
 
 CREATE TABLE public.addresses_c_d (
@@ -1537,7 +1537,7 @@ CREATE TABLE public.addresses_c_d (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_c_d FOR VALUES FROM ('3Pc') TO ('3Pd');
 
 
-ALTER TABLE public.addresses_c_d OWNER TO apetrov;
+ALTER TABLE public.addresses_c_d OWNER TO dba;
 
 
 CREATE TABLE public.addresses_d_e (
@@ -1549,7 +1549,7 @@ CREATE TABLE public.addresses_d_e (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_d_e FOR VALUES FROM ('3Pd') TO ('3Pe');
 
 
-ALTER TABLE public.addresses_d_e OWNER TO apetrov;
+ALTER TABLE public.addresses_d_e OWNER TO dba;
 
 
 CREATE TABLE public.addresses_e_f (
@@ -1561,7 +1561,7 @@ CREATE TABLE public.addresses_e_f (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_e_f FOR VALUES FROM ('3Pe') TO ('3Pf');
 
 
-ALTER TABLE public.addresses_e_f OWNER TO apetrov;
+ALTER TABLE public.addresses_e_f OWNER TO dba;
 
 
 CREATE TABLE public.addresses_f_g (
@@ -1573,7 +1573,7 @@ CREATE TABLE public.addresses_f_g (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_f_g FOR VALUES FROM ('3Pf') TO ('3Pg');
 
 
-ALTER TABLE public.addresses_f_g OWNER TO apetrov;
+ALTER TABLE public.addresses_f_g OWNER TO dba;
 
 
 CREATE TABLE public.addresses_g_h (
@@ -1585,7 +1585,7 @@ CREATE TABLE public.addresses_g_h (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_g_h FOR VALUES FROM ('3Pg') TO ('3Ph');
 
 
-ALTER TABLE public.addresses_g_h OWNER TO apetrov;
+ALTER TABLE public.addresses_g_h OWNER TO dba;
 
 
 CREATE TABLE public.addresses_h_i (
@@ -1597,7 +1597,7 @@ CREATE TABLE public.addresses_h_i (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_h_i FOR VALUES FROM ('3Ph') TO ('3Pi');
 
 
-ALTER TABLE public.addresses_h_i OWNER TO apetrov;
+ALTER TABLE public.addresses_h_i OWNER TO dba;
 
 
 CREATE TABLE public.addresses_i_j (
@@ -1609,7 +1609,7 @@ CREATE TABLE public.addresses_i_j (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_i_j FOR VALUES FROM ('3Pi') TO ('3Pj');
 
 
-ALTER TABLE public.addresses_i_j OWNER TO apetrov;
+ALTER TABLE public.addresses_i_j OWNER TO dba;
 
 
 CREATE TABLE public.addresses_j_k (
@@ -1621,7 +1621,7 @@ CREATE TABLE public.addresses_j_k (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_j_k FOR VALUES FROM ('3Pj') TO ('3Pk');
 
 
-ALTER TABLE public.addresses_j_k OWNER TO apetrov;
+ALTER TABLE public.addresses_j_k OWNER TO dba;
 
 
 CREATE TABLE public.addresses_k_l (
@@ -1633,7 +1633,7 @@ CREATE TABLE public.addresses_k_l (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_k_l FOR VALUES FROM ('3Pk') TO ('3Pl');
 
 
-ALTER TABLE public.addresses_k_l OWNER TO apetrov;
+ALTER TABLE public.addresses_k_l OWNER TO dba;
 
 
 CREATE TABLE public.addresses_l_m (
@@ -1645,7 +1645,7 @@ CREATE TABLE public.addresses_l_m (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_l_m FOR VALUES FROM ('3Pl') TO ('3Pm');
 
 
-ALTER TABLE public.addresses_l_m OWNER TO apetrov;
+ALTER TABLE public.addresses_l_m OWNER TO dba;
 
 
 CREATE TABLE public.addresses_m_n (
@@ -1657,7 +1657,7 @@ CREATE TABLE public.addresses_m_n (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_m_n FOR VALUES FROM ('3Pm') TO ('3Pn');
 
 
-ALTER TABLE public.addresses_m_n OWNER TO apetrov;
+ALTER TABLE public.addresses_m_n OWNER TO dba;
 
 
 CREATE TABLE public.addresses_n_o (
@@ -1669,7 +1669,7 @@ CREATE TABLE public.addresses_n_o (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_n_o FOR VALUES FROM ('3Pn') TO ('3Po');
 
 
-ALTER TABLE public.addresses_n_o OWNER TO apetrov;
+ALTER TABLE public.addresses_n_o OWNER TO dba;
 
 
 CREATE TABLE public.addresses_o_p (
@@ -1681,7 +1681,7 @@ CREATE TABLE public.addresses_o_p (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_o_p FOR VALUES FROM ('3Po') TO ('3Pp');
 
 
-ALTER TABLE public.addresses_o_p OWNER TO apetrov;
+ALTER TABLE public.addresses_o_p OWNER TO dba;
 
 
 CREATE TABLE public.addresses_p_q (
@@ -1693,7 +1693,7 @@ CREATE TABLE public.addresses_p_q (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_p_q FOR VALUES FROM ('3Pp') TO ('3Pq');
 
 
-ALTER TABLE public.addresses_p_q OWNER TO apetrov;
+ALTER TABLE public.addresses_p_q OWNER TO dba;
 
 
 CREATE TABLE public.addresses_q_r (
@@ -1705,7 +1705,7 @@ CREATE TABLE public.addresses_q_r (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_q_r FOR VALUES FROM ('3Pq') TO ('3Pr');
 
 
-ALTER TABLE public.addresses_q_r OWNER TO apetrov;
+ALTER TABLE public.addresses_q_r OWNER TO dba;
 
 
 CREATE TABLE public.addresses_r_s (
@@ -1717,7 +1717,7 @@ CREATE TABLE public.addresses_r_s (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_r_s FOR VALUES FROM ('3Pr') TO ('3Ps');
 
 
-ALTER TABLE public.addresses_r_s OWNER TO apetrov;
+ALTER TABLE public.addresses_r_s OWNER TO dba;
 
 
 CREATE TABLE public.addresses_s_t (
@@ -1729,7 +1729,7 @@ CREATE TABLE public.addresses_s_t (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_s_t FOR VALUES FROM ('3Ps') TO ('3Pt');
 
 
-ALTER TABLE public.addresses_s_t OWNER TO apetrov;
+ALTER TABLE public.addresses_s_t OWNER TO dba;
 
 
 CREATE TABLE public.addresses_t_u (
@@ -1741,7 +1741,7 @@ CREATE TABLE public.addresses_t_u (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_t_u FOR VALUES FROM ('3Pt') TO ('3Pu');
 
 
-ALTER TABLE public.addresses_t_u OWNER TO apetrov;
+ALTER TABLE public.addresses_t_u OWNER TO dba;
 
 
 CREATE TABLE public.addresses_u_v (
@@ -1753,7 +1753,7 @@ CREATE TABLE public.addresses_u_v (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_u_v FOR VALUES FROM ('3Pu') TO ('3Pv');
 
 
-ALTER TABLE public.addresses_u_v OWNER TO apetrov;
+ALTER TABLE public.addresses_u_v OWNER TO dba;
 
 
 CREATE TABLE public.addresses_v_w (
@@ -1765,7 +1765,7 @@ CREATE TABLE public.addresses_v_w (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_v_w FOR VALUES FROM ('3Pv') TO ('3Pw');
 
 
-ALTER TABLE public.addresses_v_w OWNER TO apetrov;
+ALTER TABLE public.addresses_v_w OWNER TO dba;
 
 
 CREATE TABLE public.addresses_w_x (
@@ -1777,7 +1777,7 @@ CREATE TABLE public.addresses_w_x (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_w_x FOR VALUES FROM ('3Pw') TO ('3Px');
 
 
-ALTER TABLE public.addresses_w_x OWNER TO apetrov;
+ALTER TABLE public.addresses_w_x OWNER TO dba;
 
 
 CREATE TABLE public.addresses_x_y (
@@ -1789,7 +1789,7 @@ CREATE TABLE public.addresses_x_y (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_x_y FOR VALUES FROM ('3Px') TO ('3Py');
 
 
-ALTER TABLE public.addresses_x_y OWNER TO apetrov;
+ALTER TABLE public.addresses_x_y OWNER TO dba;
 
 
 CREATE TABLE public.addresses_y_z (
@@ -1801,7 +1801,7 @@ CREATE TABLE public.addresses_y_z (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_y_z FOR VALUES FROM ('3Py') TO ('3Pz');
 
 
-ALTER TABLE public.addresses_y_z OWNER TO apetrov;
+ALTER TABLE public.addresses_y_z OWNER TO dba;
 
 
 CREATE TABLE public.addresses_z (
@@ -1813,7 +1813,7 @@ CREATE TABLE public.addresses_z (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_z DEFAULT;
 
 
-ALTER TABLE public.addresses_z OWNER TO apetrov;
+ALTER TABLE public.addresses_z OWNER TO dba;
 
 
 CREATE TABLE public.assets (
@@ -2153,7 +2153,7 @@ CREATE TABLE public.txs_0_1 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_0_1 FOR VALUES FROM ('0') TO ('1');
 
 
-ALTER TABLE public.txs_0_1 OWNER TO apetrov;
+ALTER TABLE public.txs_0_1 OWNER TO dba;
 
 
 CREATE TABLE public.txs_1 (
@@ -3435,7 +3435,7 @@ CREATE TABLE public.txs_1_2 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_1_2 FOR VALUES FROM ('1') TO ('2');
 
 
-ALTER TABLE public.txs_1_2 OWNER TO apetrov;
+ALTER TABLE public.txs_1_2 OWNER TO dba;
 
 
 CREATE TABLE public.txs_1_default (
@@ -3481,7 +3481,7 @@ CREATE TABLE public.txs_2_3 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_2_3 FOR VALUES FROM ('2') TO ('3');
 
 
-ALTER TABLE public.txs_2_3 OWNER TO apetrov;
+ALTER TABLE public.txs_2_3 OWNER TO dba;
 
 
 CREATE TABLE public.txs_2_default (
@@ -3531,7 +3531,7 @@ CREATE TABLE public.txs_3_4 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_3_4 FOR VALUES FROM ('3') TO ('4');
 
 
-ALTER TABLE public.txs_3_4 OWNER TO apetrov;
+ALTER TABLE public.txs_3_4 OWNER TO dba;
 
 
 CREATE TABLE public.txs_3_default (
@@ -3737,7 +3737,7 @@ CREATE TABLE public.txs_4_5 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_4_5 FOR VALUES FROM ('4') TO ('5');
 
 
-ALTER TABLE public.txs_4_5 OWNER TO apetrov;
+ALTER TABLE public.txs_4_5 OWNER TO dba;
 
 
 CREATE TABLE public.txs_4_60000000_90000000 (
@@ -3820,7 +3820,7 @@ CREATE TABLE public.txs_5_6 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_5_6 FOR VALUES FROM ('5') TO ('6');
 
 
-ALTER TABLE public.txs_5_6 OWNER TO apetrov;
+ALTER TABLE public.txs_5_6 OWNER TO dba;
 
 
 CREATE TABLE public.txs_5_default (
@@ -3865,7 +3865,7 @@ CREATE TABLE public.txs_6_7 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_6_7 FOR VALUES FROM ('6') TO ('7');
 
 
-ALTER TABLE public.txs_6_7 OWNER TO apetrov;
+ALTER TABLE public.txs_6_7 OWNER TO dba;
 
 
 CREATE TABLE public.txs_6_default (
@@ -4094,7 +4094,7 @@ CREATE TABLE public.txs_7_8 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_7_8 FOR VALUES FROM ('7') TO ('8');
 
 
-ALTER TABLE public.txs_7_8 OWNER TO apetrov;
+ALTER TABLE public.txs_7_8 OWNER TO dba;
 
 
 CREATE TABLE public.txs_7_90000000_120000000 (
@@ -4357,7 +4357,7 @@ CREATE TABLE public.txs_8_9 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_8_9 FOR VALUES FROM ('8') TO ('9');
 
 
-ALTER TABLE public.txs_8_9 OWNER TO apetrov;
+ALTER TABLE public.txs_8_9 OWNER TO dba;
 
 
 CREATE TABLE public.txs_8_default (
@@ -4401,7 +4401,7 @@ CREATE TABLE public.txs_9_a (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_9_a FOR VALUES FROM ('9') TO ('a');
 
 
-ALTER TABLE public.txs_9_a OWNER TO apetrov;
+ALTER TABLE public.txs_9_a OWNER TO dba;
 
 
 CREATE TABLE public.txs_9_default (
@@ -4431,7 +4431,7 @@ CREATE TABLE public.txs_a_b (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_a_b FOR VALUES FROM ('a') TO ('b');
 
 
-ALTER TABLE public.txs_a_b OWNER TO apetrov;
+ALTER TABLE public.txs_a_b OWNER TO dba;
 
 
 CREATE TABLE public.txs_b_c (
@@ -4449,7 +4449,7 @@ CREATE TABLE public.txs_b_c (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_b_c FOR VALUES FROM ('b') TO ('c');
 
 
-ALTER TABLE public.txs_b_c OWNER TO apetrov;
+ALTER TABLE public.txs_b_c OWNER TO dba;
 
 
 CREATE TABLE public.txs_c_d (
@@ -4467,7 +4467,7 @@ CREATE TABLE public.txs_c_d (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_c_d FOR VALUES FROM ('c') TO ('d');
 
 
-ALTER TABLE public.txs_c_d OWNER TO apetrov;
+ALTER TABLE public.txs_c_d OWNER TO dba;
 
 
 CREATE TABLE public.txs_d_e (
@@ -4485,7 +4485,7 @@ CREATE TABLE public.txs_d_e (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_d_e FOR VALUES FROM ('d') TO ('e');
 
 
-ALTER TABLE public.txs_d_e OWNER TO apetrov;
+ALTER TABLE public.txs_d_e OWNER TO dba;
 
 
 CREATE TABLE public.txs_e_f (
@@ -4503,7 +4503,7 @@ CREATE TABLE public.txs_e_f (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_e_f FOR VALUES FROM ('e') TO ('f');
 
 
-ALTER TABLE public.txs_e_f OWNER TO apetrov;
+ALTER TABLE public.txs_e_f OWNER TO dba;
 
 
 CREATE TABLE public.txs_f_g (
@@ -4521,7 +4521,7 @@ CREATE TABLE public.txs_f_g (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_f_g FOR VALUES FROM ('f') TO ('g');
 
 
-ALTER TABLE public.txs_f_g OWNER TO apetrov;
+ALTER TABLE public.txs_f_g OWNER TO dba;
 
 
 CREATE TABLE public.txs_g_h (
@@ -4539,7 +4539,7 @@ CREATE TABLE public.txs_g_h (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_g_h FOR VALUES FROM ('g') TO ('h');
 
 
-ALTER TABLE public.txs_g_h OWNER TO apetrov;
+ALTER TABLE public.txs_g_h OWNER TO dba;
 
 
 CREATE TABLE public.txs_h_i (
@@ -4557,7 +4557,7 @@ CREATE TABLE public.txs_h_i (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_h_i FOR VALUES FROM ('h') TO ('i');
 
 
-ALTER TABLE public.txs_h_i OWNER TO apetrov;
+ALTER TABLE public.txs_h_i OWNER TO dba;
 
 
 CREATE TABLE public.txs_i_j (
@@ -4575,7 +4575,7 @@ CREATE TABLE public.txs_i_j (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_i_j FOR VALUES FROM ('i') TO ('j');
 
 
-ALTER TABLE public.txs_i_j OWNER TO apetrov;
+ALTER TABLE public.txs_i_j OWNER TO dba;
 
 
 CREATE TABLE public.txs_j_k (
@@ -4593,7 +4593,7 @@ CREATE TABLE public.txs_j_k (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_j_k FOR VALUES FROM ('j') TO ('k');
 
 
-ALTER TABLE public.txs_j_k OWNER TO apetrov;
+ALTER TABLE public.txs_j_k OWNER TO dba;
 
 
 CREATE TABLE public.txs_k_l (
@@ -4611,7 +4611,7 @@ CREATE TABLE public.txs_k_l (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_k_l FOR VALUES FROM ('k') TO ('l');
 
 
-ALTER TABLE public.txs_k_l OWNER TO apetrov;
+ALTER TABLE public.txs_k_l OWNER TO dba;
 
 
 CREATE TABLE public.txs_l_m (
@@ -4629,7 +4629,7 @@ CREATE TABLE public.txs_l_m (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_l_m FOR VALUES FROM ('l') TO ('m');
 
 
-ALTER TABLE public.txs_l_m OWNER TO apetrov;
+ALTER TABLE public.txs_l_m OWNER TO dba;
 
 
 CREATE TABLE public.txs_m_n (
@@ -4647,7 +4647,7 @@ CREATE TABLE public.txs_m_n (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_m_n FOR VALUES FROM ('m') TO ('n');
 
 
-ALTER TABLE public.txs_m_n OWNER TO apetrov;
+ALTER TABLE public.txs_m_n OWNER TO dba;
 
 
 CREATE TABLE public.txs_n_o (
@@ -4665,7 +4665,7 @@ CREATE TABLE public.txs_n_o (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_n_o FOR VALUES FROM ('n') TO ('o');
 
 
-ALTER TABLE public.txs_n_o OWNER TO apetrov;
+ALTER TABLE public.txs_n_o OWNER TO dba;
 
 
 CREATE TABLE public.txs_o_p (
@@ -4683,7 +4683,7 @@ CREATE TABLE public.txs_o_p (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_o_p FOR VALUES FROM ('o') TO ('p');
 
 
-ALTER TABLE public.txs_o_p OWNER TO apetrov;
+ALTER TABLE public.txs_o_p OWNER TO dba;
 
 
 CREATE TABLE public.txs_p_q (
@@ -4701,7 +4701,7 @@ CREATE TABLE public.txs_p_q (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_p_q FOR VALUES FROM ('p') TO ('q');
 
 
-ALTER TABLE public.txs_p_q OWNER TO apetrov;
+ALTER TABLE public.txs_p_q OWNER TO dba;
 
 
 CREATE TABLE public.txs_q_r (
@@ -4719,7 +4719,7 @@ CREATE TABLE public.txs_q_r (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_q_r FOR VALUES FROM ('q') TO ('r');
 
 
-ALTER TABLE public.txs_q_r OWNER TO apetrov;
+ALTER TABLE public.txs_q_r OWNER TO dba;
 
 
 CREATE TABLE public.txs_r_s (
@@ -4737,7 +4737,7 @@ CREATE TABLE public.txs_r_s (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_r_s FOR VALUES FROM ('r') TO ('s');
 
 
-ALTER TABLE public.txs_r_s OWNER TO apetrov;
+ALTER TABLE public.txs_r_s OWNER TO dba;
 
 
 CREATE TABLE public.txs_s_t (
@@ -4755,7 +4755,7 @@ CREATE TABLE public.txs_s_t (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_s_t FOR VALUES FROM ('s') TO ('t');
 
 
-ALTER TABLE public.txs_s_t OWNER TO apetrov;
+ALTER TABLE public.txs_s_t OWNER TO dba;
 
 
 CREATE TABLE public.txs_t_u (
@@ -4773,7 +4773,7 @@ CREATE TABLE public.txs_t_u (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_t_u FOR VALUES FROM ('t') TO ('u');
 
 
-ALTER TABLE public.txs_t_u OWNER TO apetrov;
+ALTER TABLE public.txs_t_u OWNER TO dba;
 
 
 CREATE TABLE public.txs_u_v (
@@ -4791,7 +4791,7 @@ CREATE TABLE public.txs_u_v (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_u_v FOR VALUES FROM ('u') TO ('v');
 
 
-ALTER TABLE public.txs_u_v OWNER TO apetrov;
+ALTER TABLE public.txs_u_v OWNER TO dba;
 
 
 CREATE TABLE public.txs_v_w (
@@ -4809,7 +4809,7 @@ CREATE TABLE public.txs_v_w (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_v_w FOR VALUES FROM ('v') TO ('w');
 
 
-ALTER TABLE public.txs_v_w OWNER TO apetrov;
+ALTER TABLE public.txs_v_w OWNER TO dba;
 
 
 CREATE TABLE public.txs_w_x (
@@ -4827,7 +4827,7 @@ CREATE TABLE public.txs_w_x (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_w_x FOR VALUES FROM ('w') TO ('x');
 
 
-ALTER TABLE public.txs_w_x OWNER TO apetrov;
+ALTER TABLE public.txs_w_x OWNER TO dba;
 
 
 CREATE TABLE public.txs_x_y (
@@ -4845,7 +4845,7 @@ CREATE TABLE public.txs_x_y (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_x_y FOR VALUES FROM ('x') TO ('y');
 
 
-ALTER TABLE public.txs_x_y OWNER TO apetrov;
+ALTER TABLE public.txs_x_y OWNER TO dba;
 
 
 CREATE TABLE public.txs_y_z (
@@ -4863,7 +4863,7 @@ CREATE TABLE public.txs_y_z (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_y_z FOR VALUES FROM ('y') TO ('z');
 
 
-ALTER TABLE public.txs_y_z OWNER TO apetrov;
+ALTER TABLE public.txs_y_z OWNER TO dba;
 
 
 CREATE TABLE public.txs_z (
@@ -4881,7 +4881,7 @@ CREATE TABLE public.txs_z (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_z DEFAULT;
 
 
-ALTER TABLE public.txs_z OWNER TO apetrov;
+ALTER TABLE public.txs_z OWNER TO dba;
 
 
 ALTER TABLE ONLY public.addresses ALTER COLUMN uid SET DEFAULT nextval('public.addresses_uid_seq'::regclass);
