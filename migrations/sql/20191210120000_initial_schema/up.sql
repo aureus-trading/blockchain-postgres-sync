@@ -258,10 +258,10 @@ CREATE FUNCTION public.get_order_uid(_o jsonb, _height integer, _tuid bigint, _s
 	declare
 		order_uid bigint;
 	BEGIN
-		select uid from orders where id=_o->>'id' into order_uid;
+		select uid from orders where id=_o->>'id' and tx_uid=_tuid into order_uid;
 	
 		if order_uid is null then
-			insert into orders (id, height, "order") values(_o->>'id', _height, _o) returning uid into order_uid;
+			insert into orders (id, tx_uid, height, "order") values(_o->>'id', _tuid, _height, _o) returning uid into order_uid;
 			insert into txs_7_orders (
 				height, 
 				tx_uid, 
@@ -337,7 +337,7 @@ $$;
 ALTER FUNCTION public.get_tuid_by_tx_id(_tx_id character varying) OWNER TO dba;
 
 
-CREATE FUNCTION public.get_tuid_by_tx_id_and_timestamp(_tx_id character varying, _timestamp timestamp with time zone) RETURNS bigint
+CREATE FUNCTION public.get_tuid_by_tx_id_and_time_stamp(_tx_id character varying, _timestamp timestamp with time zone) RETURNS bigint
     LANGUAGE plpgsql
     AS $$
 	declare
@@ -349,7 +349,22 @@ CREATE FUNCTION public.get_tuid_by_tx_id_and_timestamp(_tx_id character varying,
 $$;
 
 
-ALTER FUNCTION public.get_tuid_by_tx_id_and_timestamp(_tx_id character varying, _timestamp timestamp with time zone) OWNER TO dba;
+ALTER FUNCTION public.get_tuid_by_tx_id_and_time_stamp(_tx_id character varying, _timestamp timestamp with time zone) OWNER TO dba;
+
+
+CREATE FUNCTION public.get_tx_sender_uid_by_tx_id_and_time_stamp(_tx_id character varying, _time_stamp timestamp with time zone) RETURNS bigint
+    LANGUAGE plpgsql
+    AS $$
+	declare
+		tx_sender_uid bigint;
+	begin
+		select sender_uid from txs where id = _tx_id and time_stamp = _time_stamp into tx_sender_uid;
+		return tx_sender_uid;
+	end;
+$$;
+
+
+ALTER FUNCTION public.get_tx_sender_uid_by_tx_id_and_time_stamp(_tx_id character varying, _time_stamp timestamp with time zone) OWNER TO dba;
 
 
 CREATE FUNCTION public.insert_address(addr character varying, public_key character varying, height integer) RETURNS bigint
@@ -411,8 +426,8 @@ begin
 		(b->>'version')::smallint,
 		to_timestamp((b ->> 'timestamp') :: DOUBLE PRECISION / 1000),
 		b->>'reference',
-		(b->'nxt-consensus'->>'base-target')::bigint,
-		b->'nxt-consensus'->>'generation-signature',
+		(CASE WHEN (b->>'version')::smallint < 5 THEN (b->'nxt-consensus'->>'base-target')::bigint ELSE (b->>'baseTarget')::bigint END),
+        (CASE WHEN (b->>'version')::smallint < 5 THEN b->'nxt-consensus'->>'generation-signature' ELSE b->>'generationSignature' END),
 		b->>'generator',
 		b->>'signature',
 		(b->>'fee')::bigint,
@@ -503,10 +518,10 @@ begin
                      amount)
   select
     -- common
-    get_tuid_by_tx_id_and_timestamp(t ->> 'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
+    get_tuid_by_tx_id_and_time_stamp(t ->> 'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
     (t ->> 'height')::int4,
     -- with sender
-	get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+	get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
     -- type specific
     get_address_or_alias_uid(t ->> 'recipient', null, (t->>'height')::int4),
     get_alias_uid(t->>'recipient'),
@@ -535,10 +550,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
 		t->>'alias'
 	from (
@@ -564,10 +579,10 @@ BEGIN
                       attachment)
   SELECT
     -- common
-    get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
+    get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
     (t ->> 'height') :: INT4,
     -- with sender
-	get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+	get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
     -- type specific
     get_asset_uid(t ->> 'assetId'),
     t ->> 'attachment'
@@ -592,7 +607,7 @@ BEGIN
     row_number() OVER (PARTITION BY t ->> 'tx_id' ) - 1,
     (t ->> 'height')::int4
   FROM (
-         SELECT jsonb_array_elements(tx -> 'transfers') || jsonb_build_object('tx_uid', get_tuid_by_tx_id_and_timestamp(tx->>'id', to_timestamp((tx->>'timestamp') :: DOUBLE PRECISION / 1000))) || jsonb_build_object('height', b->'height') AS t
+         SELECT jsonb_array_elements(tx -> 'transfers') || jsonb_build_object('tx_uid', get_tuid_by_tx_id_and_time_stamp(tx->>'id', to_timestamp((tx->>'timestamp') :: DOUBLE PRECISION / 1000))) || jsonb_build_object('height', b->'height') AS t
          FROM (
                 SELECT jsonb_array_elements(b -> 'transactions') AS tx
               ) AS txs
@@ -616,10 +631,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4)
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000))
 	from (
 		select jsonb_array_elements(b->'transactions') || jsonb_build_object('height', b->'height') as t
 	) as txs
@@ -660,7 +675,7 @@ begin
 		row_number() over (PARTITION BY d->>'tx_id') - 1 as position_in_tx,
 		(d->>'height')::int4
 	from (
-		select jsonb_array_elements(tx->'data') || jsonb_build_object('tx_uid', get_tuid_by_tx_id_and_timestamp(tx->>'id', to_timestamp((tx->>'timestamp') :: DOUBLE PRECISION / 1000))) || jsonb_build_object('height', b->'height') as d
+		select jsonb_array_elements(tx->'data') || jsonb_build_object('tx_uid', get_tuid_by_tx_id_and_time_stamp(tx->>'id', to_timestamp((tx->>'timestamp') :: DOUBLE PRECISION / 1000))) || jsonb_build_object('height', b->'height') as d
 			from (
 				select jsonb_array_elements(b->'transactions') as tx
 			) as txs
@@ -685,10 +700,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
     	t->>'script'
 	from (
@@ -716,10 +731,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
 	    get_asset_uid(t->>'assetId'),
 	    (t->>'minSponsoredAssetFee')::bigint
@@ -755,10 +770,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
 		get_asset_uid(t->>'assetId'),
 	    t->>'script'
@@ -794,10 +809,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
 		get_address_or_alias_uid(t->>'dApp', null, (t->>'height')::int4),
 	    t->'call'->>'function'
@@ -839,7 +854,7 @@ begin
 		row_number() over (PARTITION BY arg->>'tx_uid') - 1 as position_in_args,
 		(arg->>'height')::int4
 	from (
-		select jsonb_array_elements(tx->'call'->'args') || jsonb_build_object('tx_uid', get_tuid_by_tx_id_and_timestamp(tx->>'id', to_timestamp((tx->>'timestamp') :: DOUBLE PRECISION / 1000))) || jsonb_build_object('height', b->'height') as arg
+		select jsonb_array_elements(tx->'call'->'args') || jsonb_build_object('tx_uid', get_tuid_by_tx_id_and_time_stamp(tx->>'id', to_timestamp((tx->>'timestamp') :: DOUBLE PRECISION / 1000))) || jsonb_build_object('height', b->'height') as arg
 			from (
 				select jsonb_array_elements(b->'transactions') as tx
 			) as txs
@@ -861,7 +876,7 @@ begin
 		row_number() over (PARTITION BY p->'tx_uid') - 1 as position_in_payment,
 		(p->>'height')::int4
 	from (
-		select jsonb_array_elements(tx->'payment') || jsonb_build_object('tx_uid', get_tuid_by_tx_id_and_timestamp(tx->>'id', to_timestamp((tx->>'timestamp') :: DOUBLE PRECISION / 1000))) || jsonb_build_object('height', b->'height') as p
+		select jsonb_array_elements(tx->'payment') || jsonb_build_object('tx_uid', get_tuid_by_tx_id_and_time_stamp(tx->>'id', to_timestamp((tx->>'timestamp') :: DOUBLE PRECISION / 1000))) || jsonb_build_object('height', b->'height') as p
 			from (
 				select jsonb_array_elements(b->'transactions') as tx
 			) as txs
@@ -889,10 +904,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
     	get_address_or_alias_uid(t ->> 'recipient', null, (t->>'height')::int4),
     	get_alias_uid(t->>'recipient'),
@@ -927,7 +942,7 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
 		(t->>'sender_uid')::bigint,
@@ -953,7 +968,7 @@ begin
 		t->>'script'
 	from (
         select 
-            t || jsonb_build_object('sender_uid', get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4)) as t
+            t || jsonb_build_object('sender_uid', get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000))) as t
         from (
             select jsonb_array_elements(b->'transactions') || jsonb_build_object('height', b->'height') as t
         ) as t
@@ -983,11 +998,11 @@ begin
 		asset_uid
 	)
 	select
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		get_asset_uid(coalesce(t->>'feeAsset', t->>'feeAssetId')),
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type-specific
 		get_address_or_alias_uid(t->>'recipient', null, (t->>'height')::int4),
 		get_alias_uid(t->>'recipient'),
@@ -1020,10 +1035,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
 		get_asset_uid(t->>'assetId'),
 		(t->>'quantity')::bigint,
@@ -1062,10 +1077,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
 		get_asset_uid(t->>'assetId'),
 		(t->>'amount')::bigint
@@ -1102,7 +1117,10 @@ begin
                      amount,
                      price,
                      buy_matcher_fee,
-                     sell_matcher_fee)
+                     sell_matcher_fee,
+                     amount_asset_uid,
+                     price_asset_uid,
+                     time_stamp)
   select
     -- common
     (t->>'tuid')::bigint,
@@ -1116,11 +1134,14 @@ begin
     (t ->> 'amount')::bigint,
     (t ->> 'price')::bigint,
     (t ->> 'buyMatcherFee')::bigint,
-    (t ->> 'sellMatcherFee')::bigint
+    (t ->> 'sellMatcherFee')::bigint,
+    get_asset_uid(t->'order1'->>'amountAsset'),
+    get_asset_uid(t->'order1'->>'priceAsset'),
+    to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)
   from (
   	select t 
-  		   || jsonb_build_object('tuid', get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000))) 
-  		   || jsonb_build_object('sender_uid', get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4))
+  		   || jsonb_build_object('tuid', get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000))) 
+  		   || jsonb_build_object('sender_uid', get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)))
   		   as t
   		   from (
 	         select jsonb_array_elements(b -> 'transactions') || jsonb_build_object('height', b -> 'height') as t
@@ -1149,10 +1170,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
     	get_address_or_alias_uid(t ->> 'recipient', null, (t->>'height')::int4),
 	    get_alias_uid(t->>'recipient'),
@@ -1181,10 +1202,10 @@ begin
 	)
 	select
 		-- common
-		get_tuid_by_tx_id_and_timestamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
+		get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)),
 		(t->>'height')::int4,
 		-- with sender
-		get_address_uid(t->>'sender', t->>'senderPublicKey', (t->>'height')::int4),
+		get_tx_sender_uid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t ->> 'timestamp') :: DOUBLE PRECISION / 1000)),
 		-- type specific
 		get_tuid_by_tx_id(t->>'leaseId')
 	from (
@@ -1393,7 +1414,7 @@ CREATE TABLE public.addresses_0_1 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_0_1 FOR VALUES FROM ('3M0') TO ('3M1');
 
 
-ALTER TABLE public.addresses_0_1 OWNER TO apetrov;
+ALTER TABLE public.addresses_0_1 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_1_2 (
@@ -1405,7 +1426,7 @@ CREATE TABLE public.addresses_1_2 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_1_2 FOR VALUES FROM ('3M1') TO ('3M2');
 
 
-ALTER TABLE public.addresses_1_2 OWNER TO apetrov;
+ALTER TABLE public.addresses_1_2 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_2_3 (
@@ -1417,7 +1438,7 @@ CREATE TABLE public.addresses_2_3 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_2_3 FOR VALUES FROM ('3M2') TO ('3M3');
 
 
-ALTER TABLE public.addresses_2_3 OWNER TO apetrov;
+ALTER TABLE public.addresses_2_3 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_3_4 (
@@ -1429,7 +1450,7 @@ CREATE TABLE public.addresses_3_4 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_3_4 FOR VALUES FROM ('3M3') TO ('3M4');
 
 
-ALTER TABLE public.addresses_3_4 OWNER TO apetrov;
+ALTER TABLE public.addresses_3_4 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_4_5 (
@@ -1441,7 +1462,7 @@ CREATE TABLE public.addresses_4_5 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_4_5 FOR VALUES FROM ('3M4') TO ('3M5');
 
 
-ALTER TABLE public.addresses_4_5 OWNER TO apetrov;
+ALTER TABLE public.addresses_4_5 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_5_6 (
@@ -1453,7 +1474,7 @@ CREATE TABLE public.addresses_5_6 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_5_6 FOR VALUES FROM ('3M5') TO ('3M6');
 
 
-ALTER TABLE public.addresses_5_6 OWNER TO apetrov;
+ALTER TABLE public.addresses_5_6 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_6_7 (
@@ -1465,7 +1486,7 @@ CREATE TABLE public.addresses_6_7 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_6_7 FOR VALUES FROM ('3M6') TO ('3M7');
 
 
-ALTER TABLE public.addresses_6_7 OWNER TO apetrov;
+ALTER TABLE public.addresses_6_7 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_7_8 (
@@ -1477,7 +1498,7 @@ CREATE TABLE public.addresses_7_8 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_7_8 FOR VALUES FROM ('3M7') TO ('3M8');
 
 
-ALTER TABLE public.addresses_7_8 OWNER TO apetrov;
+ALTER TABLE public.addresses_7_8 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_8_9 (
@@ -1489,7 +1510,7 @@ CREATE TABLE public.addresses_8_9 (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_8_9 FOR VALUES FROM ('3M8') TO ('3M9');
 
 
-ALTER TABLE public.addresses_8_9 OWNER TO apetrov;
+ALTER TABLE public.addresses_8_9 OWNER TO dba;
 
 
 CREATE TABLE public.addresses_9_a (
@@ -1501,7 +1522,7 @@ CREATE TABLE public.addresses_9_a (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_9_a FOR VALUES FROM ('3M9') TO ('3Ma');
 
 
-ALTER TABLE public.addresses_9_a OWNER TO apetrov;
+ALTER TABLE public.addresses_9_a OWNER TO dba;
 
 
 CREATE TABLE public.addresses_a_b (
@@ -1513,7 +1534,7 @@ CREATE TABLE public.addresses_a_b (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_a_b FOR VALUES FROM ('3Ma') TO ('3Mb');
 
 
-ALTER TABLE public.addresses_a_b OWNER TO apetrov;
+ALTER TABLE public.addresses_a_b OWNER TO dba;
 
 
 CREATE TABLE public.addresses_b_c (
@@ -1525,7 +1546,7 @@ CREATE TABLE public.addresses_b_c (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_b_c FOR VALUES FROM ('3Mb') TO ('3Mc');
 
 
-ALTER TABLE public.addresses_b_c OWNER TO apetrov;
+ALTER TABLE public.addresses_b_c OWNER TO dba;
 
 
 CREATE TABLE public.addresses_c_d (
@@ -1537,7 +1558,7 @@ CREATE TABLE public.addresses_c_d (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_c_d FOR VALUES FROM ('3Mc') TO ('3Md');
 
 
-ALTER TABLE public.addresses_c_d OWNER TO apetrov;
+ALTER TABLE public.addresses_c_d OWNER TO dba;
 
 
 CREATE TABLE public.addresses_d_e (
@@ -1549,7 +1570,7 @@ CREATE TABLE public.addresses_d_e (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_d_e FOR VALUES FROM ('3Md') TO ('3Me');
 
 
-ALTER TABLE public.addresses_d_e OWNER TO apetrov;
+ALTER TABLE public.addresses_d_e OWNER TO dba;
 
 
 CREATE TABLE public.addresses_e_f (
@@ -1561,7 +1582,7 @@ CREATE TABLE public.addresses_e_f (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_e_f FOR VALUES FROM ('3Me') TO ('3Mf');
 
 
-ALTER TABLE public.addresses_e_f OWNER TO apetrov;
+ALTER TABLE public.addresses_e_f OWNER TO dba;
 
 
 CREATE TABLE public.addresses_f_g (
@@ -1573,7 +1594,7 @@ CREATE TABLE public.addresses_f_g (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_f_g FOR VALUES FROM ('3Mf') TO ('3Mg');
 
 
-ALTER TABLE public.addresses_f_g OWNER TO apetrov;
+ALTER TABLE public.addresses_f_g OWNER TO dba;
 
 
 CREATE TABLE public.addresses_g_h (
@@ -1585,7 +1606,7 @@ CREATE TABLE public.addresses_g_h (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_g_h FOR VALUES FROM ('3Mg') TO ('3Mh');
 
 
-ALTER TABLE public.addresses_g_h OWNER TO apetrov;
+ALTER TABLE public.addresses_g_h OWNER TO dba;
 
 
 CREATE TABLE public.addresses_h_i (
@@ -1597,7 +1618,7 @@ CREATE TABLE public.addresses_h_i (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_h_i FOR VALUES FROM ('3Mh') TO ('3Mi');
 
 
-ALTER TABLE public.addresses_h_i OWNER TO apetrov;
+ALTER TABLE public.addresses_h_i OWNER TO dba;
 
 
 CREATE TABLE public.addresses_i_j (
@@ -1609,7 +1630,7 @@ CREATE TABLE public.addresses_i_j (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_i_j FOR VALUES FROM ('3Mi') TO ('3Mj');
 
 
-ALTER TABLE public.addresses_i_j OWNER TO apetrov;
+ALTER TABLE public.addresses_i_j OWNER TO dba;
 
 
 CREATE TABLE public.addresses_j_k (
@@ -1621,7 +1642,7 @@ CREATE TABLE public.addresses_j_k (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_j_k FOR VALUES FROM ('3Mj') TO ('3Mk');
 
 
-ALTER TABLE public.addresses_j_k OWNER TO apetrov;
+ALTER TABLE public.addresses_j_k OWNER TO dba;
 
 
 CREATE TABLE public.addresses_k_l (
@@ -1633,7 +1654,7 @@ CREATE TABLE public.addresses_k_l (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_k_l FOR VALUES FROM ('3Mk') TO ('3Ml');
 
 
-ALTER TABLE public.addresses_k_l OWNER TO apetrov;
+ALTER TABLE public.addresses_k_l OWNER TO dba;
 
 
 CREATE TABLE public.addresses_l_m (
@@ -1645,7 +1666,7 @@ CREATE TABLE public.addresses_l_m (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_l_m FOR VALUES FROM ('3Ml') TO ('3Mm');
 
 
-ALTER TABLE public.addresses_l_m OWNER TO apetrov;
+ALTER TABLE public.addresses_l_m OWNER TO dba;
 
 
 CREATE TABLE public.addresses_m_n (
@@ -1657,7 +1678,7 @@ CREATE TABLE public.addresses_m_n (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_m_n FOR VALUES FROM ('3Mm') TO ('3Mn');
 
 
-ALTER TABLE public.addresses_m_n OWNER TO apetrov;
+ALTER TABLE public.addresses_m_n OWNER TO dba;
 
 
 CREATE TABLE public.addresses_n_o (
@@ -1669,7 +1690,7 @@ CREATE TABLE public.addresses_n_o (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_n_o FOR VALUES FROM ('3Mn') TO ('3Mo');
 
 
-ALTER TABLE public.addresses_n_o OWNER TO apetrov;
+ALTER TABLE public.addresses_n_o OWNER TO dba;
 
 
 CREATE TABLE public.addresses_o_p (
@@ -1681,7 +1702,7 @@ CREATE TABLE public.addresses_o_p (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_o_p FOR VALUES FROM ('3Mo') TO ('3Mp');
 
 
-ALTER TABLE public.addresses_o_p OWNER TO apetrov;
+ALTER TABLE public.addresses_o_p OWNER TO dba;
 
 
 CREATE TABLE public.addresses_p_q (
@@ -1693,7 +1714,7 @@ CREATE TABLE public.addresses_p_q (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_p_q FOR VALUES FROM ('3Mp') TO ('3Mq');
 
 
-ALTER TABLE public.addresses_p_q OWNER TO apetrov;
+ALTER TABLE public.addresses_p_q OWNER TO dba;
 
 
 CREATE TABLE public.addresses_q_r (
@@ -1705,7 +1726,7 @@ CREATE TABLE public.addresses_q_r (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_q_r FOR VALUES FROM ('3Mq') TO ('3Mr');
 
 
-ALTER TABLE public.addresses_q_r OWNER TO apetrov;
+ALTER TABLE public.addresses_q_r OWNER TO dba;
 
 
 CREATE TABLE public.addresses_r_s (
@@ -1717,7 +1738,7 @@ CREATE TABLE public.addresses_r_s (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_r_s FOR VALUES FROM ('3Mr') TO ('3Ms');
 
 
-ALTER TABLE public.addresses_r_s OWNER TO apetrov;
+ALTER TABLE public.addresses_r_s OWNER TO dba;
 
 
 CREATE TABLE public.addresses_s_t (
@@ -1729,7 +1750,7 @@ CREATE TABLE public.addresses_s_t (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_s_t FOR VALUES FROM ('3Ms') TO ('3Mt');
 
 
-ALTER TABLE public.addresses_s_t OWNER TO apetrov;
+ALTER TABLE public.addresses_s_t OWNER TO dba;
 
 
 CREATE TABLE public.addresses_t_u (
@@ -1741,7 +1762,7 @@ CREATE TABLE public.addresses_t_u (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_t_u FOR VALUES FROM ('3Mt') TO ('3Mu');
 
 
-ALTER TABLE public.addresses_t_u OWNER TO apetrov;
+ALTER TABLE public.addresses_t_u OWNER TO dba;
 
 
 CREATE TABLE public.addresses_u_v (
@@ -1753,7 +1774,7 @@ CREATE TABLE public.addresses_u_v (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_u_v FOR VALUES FROM ('3Mu') TO ('3Mv');
 
 
-ALTER TABLE public.addresses_u_v OWNER TO apetrov;
+ALTER TABLE public.addresses_u_v OWNER TO dba;
 
 
 CREATE TABLE public.addresses_v_w (
@@ -1765,7 +1786,7 @@ CREATE TABLE public.addresses_v_w (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_v_w FOR VALUES FROM ('3Mv') TO ('3Mw');
 
 
-ALTER TABLE public.addresses_v_w OWNER TO apetrov;
+ALTER TABLE public.addresses_v_w OWNER TO dba;
 
 
 CREATE TABLE public.addresses_w_x (
@@ -1777,7 +1798,7 @@ CREATE TABLE public.addresses_w_x (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_w_x FOR VALUES FROM ('3Mw') TO ('3Mx');
 
 
-ALTER TABLE public.addresses_w_x OWNER TO apetrov;
+ALTER TABLE public.addresses_w_x OWNER TO dba;
 
 
 CREATE TABLE public.addresses_x_y (
@@ -1789,7 +1810,7 @@ CREATE TABLE public.addresses_x_y (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_x_y FOR VALUES FROM ('3Mx') TO ('3My');
 
 
-ALTER TABLE public.addresses_x_y OWNER TO apetrov;
+ALTER TABLE public.addresses_x_y OWNER TO dba;
 
 
 CREATE TABLE public.addresses_y_z (
@@ -1801,7 +1822,7 @@ CREATE TABLE public.addresses_y_z (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_y_z FOR VALUES FROM ('3My') TO ('3Mz');
 
 
-ALTER TABLE public.addresses_y_z OWNER TO apetrov;
+ALTER TABLE public.addresses_y_z OWNER TO dba;
 
 
 CREATE TABLE public.addresses_z (
@@ -1813,7 +1834,7 @@ CREATE TABLE public.addresses_z (
 ALTER TABLE ONLY public.addresses ATTACH PARTITION public.addresses_z DEFAULT;
 
 
-ALTER TABLE public.addresses_z OWNER TO apetrov;
+ALTER TABLE public.addresses_z OWNER TO dba;
 
 
 CREATE TABLE public.assets (
@@ -1915,7 +1936,8 @@ ALTER TABLE public.candles OWNER TO dba;
 
 CREATE TABLE public.orders (
     uid bigint NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 )
@@ -1940,10 +1962,10 @@ ALTER TABLE public.orders_uid_seq OWNER TO dba;
 ALTER SEQUENCE public.orders_uid_seq OWNED BY public.orders.uid;
 
 
-
 CREATE TABLE public.orders_0_30000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -1955,7 +1977,8 @@ ALTER TABLE public.orders_0_30000000 OWNER TO dba;
 
 CREATE TABLE public.orders_120000000_150000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -1967,7 +1990,8 @@ ALTER TABLE public.orders_120000000_150000000 OWNER TO dba;
 
 CREATE TABLE public.orders_150000000_180000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -1979,7 +2003,8 @@ ALTER TABLE public.orders_150000000_180000000 OWNER TO dba;
 
 CREATE TABLE public.orders_180000000_210000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -1991,7 +2016,8 @@ ALTER TABLE public.orders_180000000_210000000 OWNER TO dba;
 
 CREATE TABLE public.orders_210000000_240000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -2003,7 +2029,8 @@ ALTER TABLE public.orders_210000000_240000000 OWNER TO dba;
 
 CREATE TABLE public.orders_240000000_270000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -2015,7 +2042,8 @@ ALTER TABLE public.orders_240000000_270000000 OWNER TO dba;
 
 CREATE TABLE public.orders_270000000_300000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -2027,7 +2055,8 @@ ALTER TABLE public.orders_270000000_300000000 OWNER TO dba;
 
 CREATE TABLE public.orders_300000000_330000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -2039,7 +2068,8 @@ ALTER TABLE public.orders_300000000_330000000 OWNER TO dba;
 
 CREATE TABLE public.orders_30000000_60000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -2051,7 +2081,8 @@ ALTER TABLE public.orders_30000000_60000000 OWNER TO dba;
 
 CREATE TABLE public.orders_60000000_90000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -2063,7 +2094,8 @@ ALTER TABLE public.orders_60000000_90000000 OWNER TO dba;
 
 CREATE TABLE public.orders_90000000_120000000 (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -2075,7 +2107,8 @@ ALTER TABLE public.orders_90000000_120000000 OWNER TO dba;
 
 CREATE TABLE public.orders_default (
     uid bigint DEFAULT nextval('public.orders_uid_seq'::regclass) NOT NULL,
-    id character varying,
+    tx_uid bigint NOT NULL,
+    id character varying NOT NULL,
     height integer NOT NULL,
     "order" jsonb NOT NULL
 );
@@ -2137,7 +2170,6 @@ ALTER TABLE public.txs_uid_seq OWNER TO dba;
 ALTER SEQUENCE public.txs_uid_seq OWNED BY public.txs.uid;
 
 
-
 CREATE TABLE public.txs_0_1 (
     uid bigint DEFAULT nextval('public.txs_uid_seq'::regclass) NOT NULL,
     tx_type smallint NOT NULL,
@@ -2153,7 +2185,7 @@ CREATE TABLE public.txs_0_1 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_0_1 FOR VALUES FROM ('0') TO ('1');
 
 
-ALTER TABLE public.txs_0_1 OWNER TO apetrov;
+ALTER TABLE public.txs_0_1 OWNER TO dba;
 
 
 CREATE TABLE public.txs_1 (
@@ -3435,7 +3467,7 @@ CREATE TABLE public.txs_1_2 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_1_2 FOR VALUES FROM ('1') TO ('2');
 
 
-ALTER TABLE public.txs_1_2 OWNER TO apetrov;
+ALTER TABLE public.txs_1_2 OWNER TO dba;
 
 
 CREATE TABLE public.txs_1_default (
@@ -3481,7 +3513,7 @@ CREATE TABLE public.txs_2_3 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_2_3 FOR VALUES FROM ('2') TO ('3');
 
 
-ALTER TABLE public.txs_2_3 OWNER TO apetrov;
+ALTER TABLE public.txs_2_3 OWNER TO dba;
 
 
 CREATE TABLE public.txs_2_default (
@@ -3531,7 +3563,7 @@ CREATE TABLE public.txs_3_4 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_3_4 FOR VALUES FROM ('3') TO ('4');
 
 
-ALTER TABLE public.txs_3_4 OWNER TO apetrov;
+ALTER TABLE public.txs_3_4 OWNER TO dba;
 
 
 CREATE TABLE public.txs_3_default (
@@ -3737,7 +3769,7 @@ CREATE TABLE public.txs_4_5 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_4_5 FOR VALUES FROM ('4') TO ('5');
 
 
-ALTER TABLE public.txs_4_5 OWNER TO apetrov;
+ALTER TABLE public.txs_4_5 OWNER TO dba;
 
 
 CREATE TABLE public.txs_4_60000000_90000000 (
@@ -3820,7 +3852,7 @@ CREATE TABLE public.txs_5_6 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_5_6 FOR VALUES FROM ('5') TO ('6');
 
 
-ALTER TABLE public.txs_5_6 OWNER TO apetrov;
+ALTER TABLE public.txs_5_6 OWNER TO dba;
 
 
 CREATE TABLE public.txs_5_default (
@@ -3865,7 +3897,7 @@ CREATE TABLE public.txs_6_7 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_6_7 FOR VALUES FROM ('6') TO ('7');
 
 
-ALTER TABLE public.txs_6_7 OWNER TO apetrov;
+ALTER TABLE public.txs_6_7 OWNER TO dba;
 
 
 CREATE TABLE public.txs_6_default (
@@ -3884,11 +3916,14 @@ ALTER TABLE public.txs_6_default OWNER TO dba;
 CREATE TABLE public.txs_7 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL,
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -3902,11 +3937,14 @@ ALTER TABLE public.txs_7 OWNER TO dba;
 CREATE TABLE public.txs_7_0_30000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -3920,11 +3958,14 @@ ALTER TABLE public.txs_7_0_30000000 OWNER TO dba;
 CREATE TABLE public.txs_7_120000000_150000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -3938,11 +3979,14 @@ ALTER TABLE public.txs_7_120000000_150000000 OWNER TO dba;
 CREATE TABLE public.txs_7_150000000_180000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -3956,11 +4000,14 @@ ALTER TABLE public.txs_7_150000000_180000000 OWNER TO dba;
 CREATE TABLE public.txs_7_180000000_210000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -3974,11 +4021,14 @@ ALTER TABLE public.txs_7_180000000_210000000 OWNER TO dba;
 CREATE TABLE public.txs_7_210000000_240000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -3992,11 +4042,14 @@ ALTER TABLE public.txs_7_210000000_240000000 OWNER TO dba;
 CREATE TABLE public.txs_7_240000000_270000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -4010,11 +4063,14 @@ ALTER TABLE public.txs_7_240000000_270000000 OWNER TO dba;
 CREATE TABLE public.txs_7_270000000_300000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -4028,11 +4084,14 @@ ALTER TABLE public.txs_7_270000000_300000000 OWNER TO dba;
 CREATE TABLE public.txs_7_300000000_330000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -4046,11 +4105,14 @@ ALTER TABLE public.txs_7_300000000_330000000 OWNER TO dba;
 CREATE TABLE public.txs_7_30000000_60000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -4064,11 +4126,14 @@ ALTER TABLE public.txs_7_30000000_60000000 OWNER TO dba;
 CREATE TABLE public.txs_7_60000000_90000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -4094,17 +4159,20 @@ CREATE TABLE public.txs_7_8 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_7_8 FOR VALUES FROM ('7') TO ('8');
 
 
-ALTER TABLE public.txs_7_8 OWNER TO apetrov;
+ALTER TABLE public.txs_7_8 OWNER TO dba;
 
 
 CREATE TABLE public.txs_7_90000000_120000000 (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL,
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -4118,11 +4186,14 @@ ALTER TABLE public.txs_7_90000000_120000000 OWNER TO dba;
 CREATE TABLE public.txs_7_default (
     tx_uid bigint NOT NULL,
     height integer NOT NULL,
+    time_stamp timestamp with time zone NOT NULL,
     sender_uid bigint NOT NULL,
     order1_uid bigint NOT NULL,
     order2_uid bigint NOT NULL,
     amount bigint NOT NULL,
     price bigint NOT NULL,
+    amount_asset_uid bigint,
+    price_asset_uid bigint,
     buy_matcher_fee bigint NOT NULL,
     sell_matcher_fee bigint NOT NULL,
     fee_asset_uid bigint
@@ -4357,7 +4428,7 @@ CREATE TABLE public.txs_8_9 (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_8_9 FOR VALUES FROM ('8') TO ('9');
 
 
-ALTER TABLE public.txs_8_9 OWNER TO apetrov;
+ALTER TABLE public.txs_8_9 OWNER TO dba;
 
 
 CREATE TABLE public.txs_8_default (
@@ -4401,7 +4472,7 @@ CREATE TABLE public.txs_9_a (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_9_a FOR VALUES FROM ('9') TO ('a');
 
 
-ALTER TABLE public.txs_9_a OWNER TO apetrov;
+ALTER TABLE public.txs_9_a OWNER TO dba;
 
 
 CREATE TABLE public.txs_9_default (
@@ -4431,7 +4502,7 @@ CREATE TABLE public.txs_a_b (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_a_b FOR VALUES FROM ('a') TO ('b');
 
 
-ALTER TABLE public.txs_a_b OWNER TO apetrov;
+ALTER TABLE public.txs_a_b OWNER TO dba;
 
 
 CREATE TABLE public.txs_b_c (
@@ -4449,7 +4520,7 @@ CREATE TABLE public.txs_b_c (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_b_c FOR VALUES FROM ('b') TO ('c');
 
 
-ALTER TABLE public.txs_b_c OWNER TO apetrov;
+ALTER TABLE public.txs_b_c OWNER TO dba;
 
 
 CREATE TABLE public.txs_c_d (
@@ -4467,7 +4538,7 @@ CREATE TABLE public.txs_c_d (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_c_d FOR VALUES FROM ('c') TO ('d');
 
 
-ALTER TABLE public.txs_c_d OWNER TO apetrov;
+ALTER TABLE public.txs_c_d OWNER TO dba;
 
 
 CREATE TABLE public.txs_d_e (
@@ -4485,7 +4556,7 @@ CREATE TABLE public.txs_d_e (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_d_e FOR VALUES FROM ('d') TO ('e');
 
 
-ALTER TABLE public.txs_d_e OWNER TO apetrov;
+ALTER TABLE public.txs_d_e OWNER TO dba;
 
 
 CREATE TABLE public.txs_e_f (
@@ -4503,7 +4574,7 @@ CREATE TABLE public.txs_e_f (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_e_f FOR VALUES FROM ('e') TO ('f');
 
 
-ALTER TABLE public.txs_e_f OWNER TO apetrov;
+ALTER TABLE public.txs_e_f OWNER TO dba;
 
 
 CREATE TABLE public.txs_f_g (
@@ -4521,7 +4592,7 @@ CREATE TABLE public.txs_f_g (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_f_g FOR VALUES FROM ('f') TO ('g');
 
 
-ALTER TABLE public.txs_f_g OWNER TO apetrov;
+ALTER TABLE public.txs_f_g OWNER TO dba;
 
 
 CREATE TABLE public.txs_g_h (
@@ -4539,7 +4610,7 @@ CREATE TABLE public.txs_g_h (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_g_h FOR VALUES FROM ('g') TO ('h');
 
 
-ALTER TABLE public.txs_g_h OWNER TO apetrov;
+ALTER TABLE public.txs_g_h OWNER TO dba;
 
 
 CREATE TABLE public.txs_h_i (
@@ -4557,7 +4628,7 @@ CREATE TABLE public.txs_h_i (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_h_i FOR VALUES FROM ('h') TO ('i');
 
 
-ALTER TABLE public.txs_h_i OWNER TO apetrov;
+ALTER TABLE public.txs_h_i OWNER TO dba;
 
 
 CREATE TABLE public.txs_i_j (
@@ -4575,7 +4646,7 @@ CREATE TABLE public.txs_i_j (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_i_j FOR VALUES FROM ('i') TO ('j');
 
 
-ALTER TABLE public.txs_i_j OWNER TO apetrov;
+ALTER TABLE public.txs_i_j OWNER TO dba;
 
 
 CREATE TABLE public.txs_j_k (
@@ -4593,7 +4664,7 @@ CREATE TABLE public.txs_j_k (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_j_k FOR VALUES FROM ('j') TO ('k');
 
 
-ALTER TABLE public.txs_j_k OWNER TO apetrov;
+ALTER TABLE public.txs_j_k OWNER TO dba;
 
 
 CREATE TABLE public.txs_k_l (
@@ -4611,7 +4682,7 @@ CREATE TABLE public.txs_k_l (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_k_l FOR VALUES FROM ('k') TO ('l');
 
 
-ALTER TABLE public.txs_k_l OWNER TO apetrov;
+ALTER TABLE public.txs_k_l OWNER TO dba;
 
 
 CREATE TABLE public.txs_l_m (
@@ -4629,7 +4700,7 @@ CREATE TABLE public.txs_l_m (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_l_m FOR VALUES FROM ('l') TO ('m');
 
 
-ALTER TABLE public.txs_l_m OWNER TO apetrov;
+ALTER TABLE public.txs_l_m OWNER TO dba;
 
 
 CREATE TABLE public.txs_m_n (
@@ -4647,7 +4718,7 @@ CREATE TABLE public.txs_m_n (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_m_n FOR VALUES FROM ('m') TO ('n');
 
 
-ALTER TABLE public.txs_m_n OWNER TO apetrov;
+ALTER TABLE public.txs_m_n OWNER TO dba;
 
 
 CREATE TABLE public.txs_n_o (
@@ -4665,7 +4736,7 @@ CREATE TABLE public.txs_n_o (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_n_o FOR VALUES FROM ('n') TO ('o');
 
 
-ALTER TABLE public.txs_n_o OWNER TO apetrov;
+ALTER TABLE public.txs_n_o OWNER TO dba;
 
 
 CREATE TABLE public.txs_o_p (
@@ -4683,7 +4754,7 @@ CREATE TABLE public.txs_o_p (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_o_p FOR VALUES FROM ('o') TO ('p');
 
 
-ALTER TABLE public.txs_o_p OWNER TO apetrov;
+ALTER TABLE public.txs_o_p OWNER TO dba;
 
 
 CREATE TABLE public.txs_p_q (
@@ -4701,7 +4772,7 @@ CREATE TABLE public.txs_p_q (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_p_q FOR VALUES FROM ('p') TO ('q');
 
 
-ALTER TABLE public.txs_p_q OWNER TO apetrov;
+ALTER TABLE public.txs_p_q OWNER TO dba;
 
 
 CREATE TABLE public.txs_q_r (
@@ -4719,7 +4790,7 @@ CREATE TABLE public.txs_q_r (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_q_r FOR VALUES FROM ('q') TO ('r');
 
 
-ALTER TABLE public.txs_q_r OWNER TO apetrov;
+ALTER TABLE public.txs_q_r OWNER TO dba;
 
 
 CREATE TABLE public.txs_r_s (
@@ -4737,7 +4808,7 @@ CREATE TABLE public.txs_r_s (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_r_s FOR VALUES FROM ('r') TO ('s');
 
 
-ALTER TABLE public.txs_r_s OWNER TO apetrov;
+ALTER TABLE public.txs_r_s OWNER TO dba;
 
 
 CREATE TABLE public.txs_s_t (
@@ -4755,7 +4826,7 @@ CREATE TABLE public.txs_s_t (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_s_t FOR VALUES FROM ('s') TO ('t');
 
 
-ALTER TABLE public.txs_s_t OWNER TO apetrov;
+ALTER TABLE public.txs_s_t OWNER TO dba;
 
 
 CREATE TABLE public.txs_t_u (
@@ -4773,7 +4844,7 @@ CREATE TABLE public.txs_t_u (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_t_u FOR VALUES FROM ('t') TO ('u');
 
 
-ALTER TABLE public.txs_t_u OWNER TO apetrov;
+ALTER TABLE public.txs_t_u OWNER TO dba;
 
 
 CREATE TABLE public.txs_u_v (
@@ -4791,7 +4862,7 @@ CREATE TABLE public.txs_u_v (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_u_v FOR VALUES FROM ('u') TO ('v');
 
 
-ALTER TABLE public.txs_u_v OWNER TO apetrov;
+ALTER TABLE public.txs_u_v OWNER TO dba;
 
 
 CREATE TABLE public.txs_v_w (
@@ -4809,7 +4880,7 @@ CREATE TABLE public.txs_v_w (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_v_w FOR VALUES FROM ('v') TO ('w');
 
 
-ALTER TABLE public.txs_v_w OWNER TO apetrov;
+ALTER TABLE public.txs_v_w OWNER TO dba;
 
 
 CREATE TABLE public.txs_w_x (
@@ -4827,7 +4898,7 @@ CREATE TABLE public.txs_w_x (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_w_x FOR VALUES FROM ('w') TO ('x');
 
 
-ALTER TABLE public.txs_w_x OWNER TO apetrov;
+ALTER TABLE public.txs_w_x OWNER TO dba;
 
 
 CREATE TABLE public.txs_x_y (
@@ -4845,7 +4916,7 @@ CREATE TABLE public.txs_x_y (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_x_y FOR VALUES FROM ('x') TO ('y');
 
 
-ALTER TABLE public.txs_x_y OWNER TO apetrov;
+ALTER TABLE public.txs_x_y OWNER TO dba;
 
 
 CREATE TABLE public.txs_y_z (
@@ -4863,7 +4934,7 @@ CREATE TABLE public.txs_y_z (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_y_z FOR VALUES FROM ('y') TO ('z');
 
 
-ALTER TABLE public.txs_y_z OWNER TO apetrov;
+ALTER TABLE public.txs_y_z OWNER TO dba;
 
 
 CREATE TABLE public.txs_z (
@@ -4881,7 +4952,7 @@ CREATE TABLE public.txs_z (
 ALTER TABLE ONLY public.txs ATTACH PARTITION public.txs_z DEFAULT;
 
 
-ALTER TABLE public.txs_z OWNER TO apetrov;
+ALTER TABLE public.txs_z OWNER TO dba;
 
 
 ALTER TABLE ONLY public.addresses ALTER COLUMN uid SET DEFAULT nextval('public.addresses_uid_seq'::regclass);
@@ -5114,15 +5185,12 @@ ALTER TABLE ONLY public.candles
     ADD CONSTRAINT candles_pkey PRIMARY KEY (interval, time_start, amount_asset_uid, price_asset_uid, matcher_address_uid);
 
 
-
 ALTER TABLE ONLY public.orders
     ADD CONSTRAINT orders_uid_key UNIQUE (uid);
 
 
-
 ALTER TABLE ONLY public.orders_0_30000000
     ADD CONSTRAINT orders_0_30000000_uid_key UNIQUE (uid);
-
 
 
 ALTER TABLE ONLY public.orders_120000000_150000000
@@ -6521,6 +6589,9 @@ CREATE UNIQUE INDEX addresses_z_uid_address_first_appeared_on_height_idx ON publ
 
 
 CREATE UNIQUE INDEX addresses_z_uid_address_public_key_idx ON public.addresses_z USING btree (uid, address, public_key);
+
+
+CREATE INDEX addresses_first_appeared_on_height_idx ON public.addresses USING btree (first_appeared_on_height);
 
 
 CREATE INDEX assets_asset_id_idx ON public.assets USING btree (asset_id);
