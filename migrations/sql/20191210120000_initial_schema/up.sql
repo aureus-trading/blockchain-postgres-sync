@@ -1111,6 +1111,7 @@ begin
   insert into txs_7 (tx_uid,
   					 height,
                      fee_asset_uid,
+                     time_stamp,
                      sender_uid,
                      order1_uid,
                      order2_uid,
@@ -1119,13 +1120,13 @@ begin
                      buy_matcher_fee,
                      sell_matcher_fee,
                      amount_asset_uid,
-                     price_asset_uid,
-                     time_stamp)
+                     price_asset_uid)
   select
     -- common
     (t->>'tuid')::bigint,
     (t ->> 'height')::int4,
    	get_asset_uid(t->>'feeAssetId'),
+    to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000),
     -- with sender
 	(t->>'sender_uid')::bigint,
     -- type specific
@@ -1136,8 +1137,7 @@ begin
     (t ->> 'buyMatcherFee')::bigint,
     (t ->> 'sellMatcherFee')::bigint,
     get_asset_uid(t->'order1'->>'amountAsset'),
-    get_asset_uid(t->'order1'->>'priceAsset'),
-    to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000)
+    get_asset_uid(t->'order1'->>'priceAsset')
   from (
   	select t 
   		   || jsonb_build_object('tuid', get_tuid_by_tx_id_and_time_stamp(t->>'id', to_timestamp((t->>'timestamp') :: DOUBLE PRECISION / 1000))) 
