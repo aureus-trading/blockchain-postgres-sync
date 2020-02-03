@@ -7779,6 +7779,9 @@ CREATE INDEX txs_4_asset_uid_tx_uid_idx ON ONLY public.txs_4 USING btree (asset_
 CREATE INDEX txs_4_0_30000000_asset_uid_idx ON public.txs_4_0_30000000 USING btree (asset_uid);
 
 
+CREATE INDEX txs_4_0_30000000_asset_uid_tx_uid_idx ON public.txs_4_0_30000000 USING btree (asset_uid_ tx_uid);
+
+
 CREATE INDEX txs_4_height_idx ON ONLY public.txs_4 USING btree (height);
 
 
@@ -7800,6 +7803,9 @@ CREATE INDEX txs_4_0_30000000_sender_uid_idx ON public.txs_4_0_30000000 USING bt
 CREATE INDEX txs_4_120000000_150000000_asset_uid_idx ON public.txs_4_120000000_150000000 USING btree (asset_uid);
 
 
+CREATE INDEX txs_4_120000000_150000000_asset_uid_tx_uid_idx ON public.txs_4_120000000_150000000 USING btree (asset_uid, tx_uid);
+
+
 CREATE INDEX txs_4_120000000_150000000_height_idx ON public.txs_4_120000000_150000000 USING btree (height);
 
 
@@ -7810,6 +7816,9 @@ CREATE INDEX txs_4_120000000_150000000_sender_uid_idx ON public.txs_4_120000000_
 
 
 CREATE INDEX txs_4_150000000_180000000_asset_uid_idx ON public.txs_4_150000000_180000000 USING btree (asset_uid);
+
+
+CREATE INDEX txs_4_150000000_180000000_asset_uid_tx_uid_idx ON public.txs_4_150000000_180000000 USING btree (asset_uid, tx_uid);
 
 
 CREATE INDEX txs_4_150000000_180000000_height_idx ON public.txs_4_150000000_180000000 USING btree (height);
@@ -7824,6 +7833,9 @@ CREATE INDEX txs_4_150000000_180000000_sender_uid_idx ON public.txs_4_150000000_
 CREATE INDEX txs_4_180000000_210000000_asset_uid_idx ON public.txs_4_180000000_210000000 USING btree (asset_uid);
 
 
+CREATE INDEX txs_4_180000000_210000000_asset_uid_tx_uid_idx ON public.txs_4_180000000_210000000 USING btree (asset_uid, tx_uid);
+
+
 CREATE INDEX txs_4_180000000_210000000_height_idx ON public.txs_4_180000000_210000000 USING btree (height);
 
 
@@ -7834,6 +7846,9 @@ CREATE INDEX txs_4_180000000_210000000_sender_uid_idx ON public.txs_4_180000000_
 
 
 CREATE INDEX txs_4_210000000_240000000_asset_uid_idx ON public.txs_4_210000000_240000000 USING btree (asset_uid);
+
+
+CREATE INDEX txs_4_210000000_240000000_asset_uid_tx_uid_idx ON public.txs_4_210000000_240000000 USING btree (asset_uid, tx_uid);
 
 
 CREATE INDEX txs_4_210000000_240000000_height_idx ON public.txs_4_210000000_240000000 USING btree (height);
@@ -7848,6 +7863,9 @@ CREATE INDEX txs_4_210000000_240000000_sender_uid_idx ON public.txs_4_210000000_
 CREATE INDEX txs_4_240000000_270000000_asset_uid_idx ON public.txs_4_240000000_270000000 USING btree (asset_uid);
 
 
+CREATE INDEX txs_4_240000000_270000000_asset_uid_tx_uid_idx ON public.txs_4_240000000_270000000 USING btree (asset_uid, tx_uid);
+
+
 CREATE INDEX txs_4_240000000_270000000_height_idx ON public.txs_4_240000000_270000000 USING btree (height);
 
 
@@ -7857,7 +7875,7 @@ CREATE INDEX txs_4_240000000_270000000_recipient_address_uid_idx ON public.txs_4
 CREATE INDEX txs_4_240000000_270000000_sender_uid_idx ON public.txs_4_240000000_270000000 USING btree (sender_uid);
 
 
-CREATE INDEX txs_4_270000000_300000000_asset_uid_idx ON public.txs_4_270000000_300000000 USING btree (asset_uid);
+CREATE INDEX txs_4_270000000_300000000_asset_uid_tx_uid_idx ON public.txs_4_270000000_300000000 USING btree (asset_uid, tx_uid);
 
 
 CREATE INDEX txs_4_270000000_300000000_height_idx ON public.txs_4_270000000_300000000 USING btree (height);
@@ -7872,6 +7890,9 @@ CREATE INDEX txs_4_270000000_300000000_sender_uid_idx ON public.txs_4_270000000_
 CREATE INDEX txs_4_300000000_330000000_asset_uid_idx ON public.txs_4_300000000_330000000 USING btree (asset_uid);
 
 
+CREATE INDEX txs_4_300000000_330000000_asset_uid_tx_uid_idx ON public.txs_4_300000000_330000000 USING btree (asset_uid, tx_uid);
+
+
 CREATE INDEX txs_4_300000000_330000000_height_idx ON public.txs_4_300000000_330000000 USING btree (height);
 
 
@@ -7882,6 +7903,9 @@ CREATE INDEX txs_4_300000000_330000000_sender_uid_idx ON public.txs_4_300000000_
 
 
 CREATE INDEX txs_4_30000000_60000000_asset_uid_idx ON public.txs_4_30000000_60000000 USING btree (asset_uid);
+
+
+CREATE INDEX txs_4_30000000_60000000_asset_uid_tx_uid_idx ON public.txs_4_30000000_60000000 USING btree (asset_uid, tx_uid);
 
 
 CREATE INDEX txs_4_30000000_60000000_height_idx ON public.txs_4_30000000_60000000 USING btree (height);
@@ -7920,6 +7944,9 @@ CREATE INDEX txs_4_5_uid_idx ON public.txs_4_5 USING btree (uid);
 CREATE INDEX txs_4_60000000_90000000_asset_uid_idx ON public.txs_4_60000000_90000000 USING btree (asset_uid);
 
 
+CREATE INDEX txs_4_60000000_90000000_asset_uid_tx_uid_idx ON public.txs_4_60000000_90000000 USING btree (asset_uid, tx_uid);
+
+
 CREATE INDEX txs_4_60000000_90000000_height_idx ON public.txs_4_60000000_90000000 USING btree (height);
 
 
@@ -7932,6 +7959,9 @@ CREATE INDEX txs_4_60000000_90000000_sender_uid_idx ON public.txs_4_60000000_900
 CREATE INDEX txs_4_90000000_120000000_asset_uid_idx ON public.txs_4_90000000_120000000 USING btree (asset_uid);
 
 
+CREATE INDEX txs_4_90000000_120000000_asset_uid_tx_uid_idx ON public.txs_4_90000000_120000000 USING btree (asset_uid, tx_uid);
+
+
 CREATE INDEX txs_4_90000000_120000000_height_idx ON public.txs_4_90000000_120000000 USING btree (height);
 
 
@@ -7942,6 +7972,9 @@ CREATE INDEX txs_4_90000000_120000000_sender_uid_idx ON public.txs_4_90000000_12
 
 
 CREATE INDEX txs_4_default_asset_uid_idx ON public.txs_4_default USING btree (asset_uid);
+
+
+CREATE INDEX txs_4_default_asset_uid_tx_uid_idx ON public.txs_4_default USING btree (asset_uid, tx_uid);
 
 
 CREATE INDEX txs_4_default_height_idx ON public.txs_4_default USING btree (height);
@@ -10938,7 +10971,7 @@ ALTER INDEX public.txs_3_tx_uid_key ATTACH PARTITION public.txs_3_default_tx_uid
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_0_30000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_0_30000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_0_30000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_0_30000000_height_idx;
@@ -10956,7 +10989,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_0_30000000_tx_
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_120000000_150000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_120000000_150000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_120000000_150000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_120000000_150000000_height_idx;
@@ -10974,7 +11007,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_120000000_1500
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_150000000_180000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_150000000_180000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_150000000_180000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_150000000_180000000_height_idx;
@@ -10992,7 +11025,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_150000000_1800
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_180000000_210000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_180000000_210000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_180000000_210000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_180000000_210000000_height_idx;
@@ -11010,7 +11043,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_180000000_2100
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_210000000_240000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_210000000_240000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_210000000_240000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_210000000_240000000_height_idx;
@@ -11028,7 +11061,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_210000000_2400
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_240000000_270000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_240000000_270000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_240000000_270000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_240000000_270000000_height_idx;
@@ -11046,7 +11079,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_240000000_2700
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_270000000_300000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_270000000_300000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_270000000_300000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_270000000_300000000_height_idx;
@@ -11064,7 +11097,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_270000000_3000
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_300000000_330000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_300000000_330000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_300000000_330000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_300000000_330000000_height_idx;
@@ -11082,7 +11115,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_300000000_3300
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_30000000_60000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_30000000_60000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_30000000_60000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_30000000_60000000_height_idx;
@@ -11127,7 +11160,7 @@ ALTER INDEX public.txs_uid_idx ATTACH PARTITION public.txs_4_5_uid_idx;
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_60000000_90000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_60000000_90000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_60000000_90000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_60000000_90000000_height_idx;
@@ -11145,7 +11178,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_60000000_90000
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_90000000_120000000_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_90000000_120000000_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_90000000_120000000_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_90000000_120000000_height_idx;
@@ -11163,7 +11196,7 @@ ALTER INDEX public.txs_4_tx_uid_key ATTACH PARTITION public.txs_4_90000000_12000
 ALTER INDEX public.txs_4_asset_uid_idx ATTACH PARTITION public.txs_4_default_asset_uid_idx;
 
 
-ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_default_asset_uid_idx;
+ALTER INDEX public.txs_4_asset_uid_tx_uid_idx ATTACH PARTITION public.txs_4_default_asset_uid_tx_uid_idx;
 
 
 ALTER INDEX public.txs_4_height_idx ATTACH PARTITION public.txs_4_default_height_idx;
