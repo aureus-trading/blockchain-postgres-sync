@@ -11,3 +11,9 @@ pool:
 
 steps:
 
+- task: Docker@2
+  inputs:
+    containerRegistry: 'turtlenetwork docker'
+    repository: 'turtlenetwork/data-service-backend'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
