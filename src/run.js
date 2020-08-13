@@ -66,7 +66,7 @@ const run = async (batches, options) => {
         t.sequence(index =>
           requestMore(index).then(data => {
             if (data && data.length) {
-              return insertBatch(t, data, batches[index]);
+              return insertBatch(db, data, batches[index]);
             }
           })
         )

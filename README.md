@@ -19,7 +19,7 @@ A set of scripts to download and update Waves blockchain history data into a Pos
    ```bash
    npm run download {start} {end},
    # for example
-   npm run download 1 100000
+   npm run download 1 1000000
    ```
 
    Blocks from the range get inserted in a single transaction, so either all get inserted, or none. In our experience ranges of 10000—100000 work best.

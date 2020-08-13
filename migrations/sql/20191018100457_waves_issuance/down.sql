@@ -44,7 +44,7 @@ CREATE VIEW public.assets AS
 UNION ALL
  SELECT 'TN'::character varying AS asset_id,
     'TN'::text AS ticker,
-    'Turtle Network'::character varying AS asset_name,
+    'TurtleNetwork'::character varying AS asset_name,
     ''::character varying AS description,
     ''::character varying AS sender,
     0 AS issue_height,
