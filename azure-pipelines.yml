@@ -6,14 +6,41 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+variables:
+  tag: '$(Build.BuildId)'
 
-steps:
+resources:
+- repo: self
 
-- task: Docker@2
-  inputs:
-    containerRegistry: 'turtlenetwork docker'
-    repository: 'turtlenetwork/data-service-backend'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+stages:
+- stage: Build
+  displayName: BuildBlockchainPGSync
+  jobs:  
+  - job: BuildBlockchainPGSync
+    displayName: BuildBlockchainPGSync
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          GIT_COMMIT=$(git rev-parse --short HEAD)
+          
+          echo "GIT_COMMIT: ${GIT_COMMIT}"
+          
+          #
+          # set env variable to allow next task to consume
+          #
+          echo "##vso[task.setvariable variable=GIT_COMMIT]${GIT_COMMIT}"
+
+    - task: Docker@2
+      displayName: Build and push blockchain-postgres-sync image
+      inputs:
+        containerRegistry: 'polarity-acr'
+        repository: 'data-service-blockchain-sync'
+        command: buildAndPush
+        Dockerfile: '**/Dockerfile'
+        tags: |
+          develop
+          $(GIT_COMMIT)
