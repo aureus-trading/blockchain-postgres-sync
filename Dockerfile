@@ -18,4 +18,5 @@ ENTRYPOINT ["/sbin/tini", "--"]
 # NodeJS launch
 USER node
 ENV NODE_ENV production
+ENV SSL true
 CMD ["/bin/sh", "/opt/app/entrypoint.sh"]

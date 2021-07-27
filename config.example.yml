@@ -45,3 +45,4 @@ postgresPort: #5 432 or other
 postgresDatabase: # database name
 postgresUser: # username
 postgresPassword: # password
+postgresSsl: true # ssl enabled
